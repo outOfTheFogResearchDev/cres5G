@@ -56,7 +56,7 @@ export default class extends Component {
   }
 
   async componentDidMount() {
-    // await post('/api/connect');
+    await post('/api/connect');
     this.setState({ response: 'Connected' });
   }
 
