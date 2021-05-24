@@ -15,7 +15,7 @@ module.exports = {
     let code = Math.round(frequency * 10);
     if (code < 100) code = 100;
     if (code > 200) code = 200;
-    await this.write(`sf ${(code / 10).toFixed(1)}`);
+    await this.write(`sf ${(code / 10).toFixed(1)} `);
   },
   async getAmpPhaseCodes() {
     const { amplitude: amp, phase_360: phase } = JSON.parse(await this.write('apd'));

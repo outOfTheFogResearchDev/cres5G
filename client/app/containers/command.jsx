@@ -4,6 +4,7 @@ import styled from 'styled-components';
 const Container = styled.div`
   grid-area: command;
   padding: 10px 10px;
+  margin-top: 15px;
   width: 310px;
   border-color: '#000';
   border-style: double;

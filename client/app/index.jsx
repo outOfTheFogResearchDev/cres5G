@@ -7,8 +7,8 @@ import CresControl from './containers/cresControl';
 const Container = styled.div`
   display: grid;
   grid:
-    'cres command'
-    'cres response';
+    'cres response'
+    'command response';
   margin: 15px 5px;
   height: 600px;
   gap: 10px;
@@ -63,24 +63,27 @@ export default class extends Component {
   onToggle(name) {
     const that = this;
     return async function namedOnToggle() {
-      const { [name]: toggle, delay, ps1, ps2, pd } = that.state;
+      const { [name]: toggle, delay, ps1, ps2, pd, codesToggled } = that.state;
+      const newState = { [name]: !toggle };
       switch (name) {
         case 'codesToggled':
-          if (!toggle) await post('/api/manual_codes', { ps1, ps2, pd });
-          else await post('/api/firmware');
+          if (!toggle) {
+            newState.freezeToggled = false;
+            await post('/api/manual_codes', { ps1, ps2, pd });
+          } else await post('/api/firmware');
           break;
         case 'timeSyncToggled':
           if (!toggle) await post('/api/timesync/on', { delay });
           else await post('/api/timesync/off');
           break;
         case 'freezeToggled':
-          if (!toggle) await post('/api/freeze/on');
+          if (!toggle && !codesToggled) await post('/api/freeze/on');
           else await post('/api/freeze/off');
           break;
         default:
           break;
       }
-      that.setState({ [name]: !toggle });
+      that.setState(newState);
     };
   }
 

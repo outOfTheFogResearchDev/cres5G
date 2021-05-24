@@ -24,7 +24,7 @@ api.post('/manual_frequency', async (req, res) => {
 });
 
 api.post('/firmware', async (req, res) => {
-  await telnet.write(`mp3 0`);
+  await telnet.write(`mp3 0 `);
   res.sendStatus(201);
 });
 

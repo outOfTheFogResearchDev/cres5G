@@ -7,6 +7,7 @@ const Container = styled.div`
   grid: 'ps1 ps2 pd menter';
   gap: 10px;
   padding: 10px 10px;
+  margin-top: -10px;
   border-style: solid;
   border-color: #eee;
   justify-self: center;

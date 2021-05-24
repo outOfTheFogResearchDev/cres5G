@@ -8,10 +8,11 @@ const Grid = styled.div`
   display: grid;
   grid-area: cres;
   grid:
-    'title frequency'
-    'codes codes'
-    'timesync timesync'
-    'freeze freeze';
+    'title'
+    'frequency'
+    'codes'
+    'timesync'
+    'freeze';
   padding: 10px 10px;
   gap: 10px;
   margin-top: 10px;
@@ -26,13 +27,26 @@ const Title = styled.h2`
   justify-self: center;
   align-self: center;
   margin-top: -5px;
+  margin-bottom: 0px;
 `;
 
 const Frequency = styled.form`
+  display: grid;
+  grid:
+    'header1 freq'
+    'header2 freq';
   grid-area: frequency;
   padding: 10px 10px;
+  margin-top: -5px;
   border-color: '#000';
   border-style: double;
+  justify-self: center;
+  align-self: center;
+`;
+
+const FrequencyContainer = styled.div`
+  grid-area: freq;
+  padding: 10px 10px;
   justify-self: center;
   align-self: center;
 `;
@@ -41,7 +55,8 @@ const CodesContainer = styled.div`
   display: grid;
   grid-area: codes;
   grid:
-    'header off switch on'
+    'header1 off switch on'
+    'header2 off switch on'
     'manual manual manual manual';
   gap: 10px;
   padding: 10px 10px;
@@ -112,10 +127,11 @@ export default ({
   <Grid>
     <Title>Cres Control</Title>
     <Frequency>
-      <label htmlFor="manualFrequency">
-        {'Set Frequency: '}
+      <Label style={{ gridArea: 'header1', marginBottom: '0px' }}>Set Frequency</Label>
+      <Label style={{ gridArea: 'header2', marginTop: '0px', marginBottom: '0px' }}>( MHz )</Label>
+      <FrequencyContainer>
         <input
-          style={{ width: '75px' }}
+          style={{ width: '75px', gridArea: 'freq' }}
           type="number"
           name="manualFrequency"
           id="manualFrequency"
@@ -125,22 +141,23 @@ export default ({
           step="0.1"
           onChange={inputChange}
         />
-      </label>
-      <button
-        type="submit"
-        onClick={e => {
-          e.preventDefault();
-          manualFrequencyEnter();
-        }}
-      >
-        Submit
-      </button>
+        <button
+          type="submit"
+          onClick={e => {
+            e.preventDefault();
+            manualFrequencyEnter();
+          }}
+        >
+          Enter
+        </button>
+      </FrequencyContainer>
     </Frequency>
     <CodesContainer>
-      <Label>Codes</Label>
-      <SwitchLabelOff>auto</SwitchLabelOff>
+      <Label style={{ gridArea: 'header1', marginBottom: '-10px' }}>Cancellation</Label>
+      <Label style={{ gridArea: 'header2', marginTop: '-38px', marginBottom: '0px' }}>Mode</Label>
+      <SwitchLabelOff style={{ marginTop: '0px' }}>Auto</SwitchLabelOff>
       <Toggle toggled={codesToggled} onToggle={onToggle('codesToggled')} />
-      <SwitchLabelOn>manual</SwitchLabelOn>
+      <SwitchLabelOn style={{ marginTop: '0px' }}>Manual</SwitchLabelOn>
       <ManualInput inputChange={inputChange} ps1={ps1} ps2={ps2} pd={pd} manualEnter={manualEnter} />
     </CodesContainer>
     <TimeSyncContainer>
