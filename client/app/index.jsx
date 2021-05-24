@@ -77,8 +77,10 @@ export default class extends Component {
           else await post('/api/timesync/off');
           break;
         case 'freezeToggled':
-          if (!toggle && !codesToggled) await post('/api/freeze/on');
-          else await post('/api/freeze/off');
+          if (!toggle) {
+            if (!codesToggled) await post('/api/freeze/on');
+            else newState[name] = toggle;
+          } else await post('/api/freeze/off');
           break;
         default:
           break;
@@ -90,19 +92,18 @@ export default class extends Component {
   async manualFrequencyEnter() {
     const { manualFrequency } = this.state;
     await post('/api/manual_frequency', { manualFrequency });
-    this.setState({ response: 'Frequency Code Entered' });
   }
 
   async manualEnter() {
     const { ps1, ps2, pd } = this.state;
     await post('/api/manual_codes', { ps1, ps2, pd });
-    this.setState({ response: 'Codes Entered', codesToggled: true });
+    this.setState({ codesToggled: true });
   }
 
   async timeEnter() {
     const { delay } = this.state;
     await post('/api/timesync/on', { delay });
-    this.setState({ response: 'Time Sync Entered', timeSyncToggled: true });
+    this.setState({ timeSyncToggled: true });
   }
 
   async enterCommand() {

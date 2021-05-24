@@ -13,8 +13,8 @@ module.exports = {
     }),
   async setFreq(frequency) {
     let code = Math.round(frequency * 10);
-    if (code < 100) code = 100;
-    if (code > 200) code = 200;
+    if (code < 1000) code = 1000;
+    if (code > 2000) code = 2000;
     await this.write(`sf ${(code / 10).toFixed(1)} `);
   },
   async getAmpPhaseCodes() {
