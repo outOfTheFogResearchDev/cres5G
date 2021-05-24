@@ -1,3 +1,3 @@
 git stash
-git pull origin master -f
+git pull origin main -f
 npm run setup
