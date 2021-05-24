@@ -141,7 +141,7 @@ export default class extends Component {
 
   inputChange({ target: { name, value: v } }) {
     let value = v;
-    if (isNumeric(value)) value = value.toString().replace(/^[0]+/g, '') || 0;
+    if (isNumeric(value)) value = value.toString().replace(/^[0]+/g, '') || (name === 'command' ? '' : 0);
     this.setState({ [name]: value });
   }
 
