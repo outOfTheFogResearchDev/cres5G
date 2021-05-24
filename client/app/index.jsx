@@ -85,25 +85,29 @@ export default class extends Component {
         default:
           break;
       }
-      that.setState(newState);
+      that.setStateAndGlobal(newState);
     };
   }
 
-  async manualFrequencyEnter() {
-    const { manualFrequency } = this.state;
-    await post('/api/manual_frequency', { manualFrequency });
+  async setStateAndGlobal(newState) {
+    const {
+      data: { response },
+    } = await get('/api/command', { params: { command: 'GlobalStat' } });
+    newState.response = response; // eslint-disable-line no-param-reassign
+    this.setState(newState);
   }
 
-  async manualEnter() {
-    const { ps1, ps2, pd } = this.state;
-    await post('/api/manual_codes', { ps1, ps2, pd });
-    this.setState({ codesToggled: true });
+  async globalStat() {
+    const {
+      data: { response },
+    } = await get('/api/command', { params: { command: 'GlobalStat' } });
+    this.setState({ response });
   }
 
   async timeEnter() {
     const { delay } = this.state;
     await post('/api/timesync/on', { delay });
-    this.setState({ timeSyncToggled: true });
+    this.setStateAndGlobal({ timeSyncToggled: true });
   }
 
   async enterCommand() {
@@ -132,11 +136,17 @@ export default class extends Component {
     this.setState(newState);
   }
 
-  async globalStat() {
-    const {
-      data: { response },
-    } = await get('/api/command', { params: { command: 'GlobalStat' } });
-    this.setState({ response });
+  async manualFrequencyEnter() {
+    const { manualFrequency } = this.state;
+    await post('/api/manual_frequency', { manualFrequency });
+    this.setStateAndGlobal({});
+  }
+
+  async manualEnter() {
+    const { ps1, ps2, pd } = this.state;
+    await post('/api/manual_codes', { ps1, ps2, pd });
+    this.setState({ codesToggled: true });
+    this.setStateAndGlobal({});
   }
 
   inputChange({ target: { name, value: v } }) {
