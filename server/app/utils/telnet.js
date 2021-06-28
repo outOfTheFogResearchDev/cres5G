@@ -18,7 +18,7 @@ module.exports = {
     await this.write(`sf ${(code / 10).toFixed(1)} `);
   },
   async getAmpPhaseCodes() {
-    const { amplitude: amp, phase_360: phase } = JSON.parse(await this.write('apd'));
+    const { amplitude: amp, phase_360: phase } = JSON.parse(await this.write('apd '));
     return { amp, phase };
   },
   async parseGlobalStat() {

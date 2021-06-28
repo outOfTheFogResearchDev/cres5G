@@ -35,8 +35,8 @@ api.post('/manual_codes', async (req, res) => {
 });
 
 api.post('/timesync/on', async (req, res) => {
-  const { delay } = req.body;
-  await telnet.write(`timesync 1 ${delay} `);
+  const { delay1, delay2 } = req.body;
+  await telnet.write(`timesync 1 ${delay1} ${delay2} `);
   res.sendStatus(201);
 });
 

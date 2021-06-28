@@ -117,7 +117,8 @@ export default ({
   ps2,
   pd,
   manualEnter,
-  delay,
+  delay1,
+  delay2,
   timeEnter,
   onToggle,
   codesToggled,
@@ -165,7 +166,7 @@ export default ({
       <SwitchLabelOff>off</SwitchLabelOff>
       <Toggle toggled={timeSyncToggled} onToggle={onToggle('timeSyncToggled')} />
       <SwitchLabelOn>on</SwitchLabelOn>
-      <TimeSyncInput inputChange={inputChange} delay={delay} timeEnter={timeEnter} />
+      <TimeSyncInput inputChange={inputChange} delay1={delay1} delay2={delay2} timeEnter={timeEnter} />
     </TimeSyncContainer>
     <FreezeContainer>
       <Label>Freeze Codes</Label>
