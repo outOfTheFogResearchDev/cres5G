@@ -4,7 +4,9 @@ import styled from 'styled-components';
 const Container = styled.div`
   grid-area: time;
   display: grid;
-  grid: 'delay tenter';
+  grid:
+    'delay1 delay2 tenter'
+    'desc desc desc';
   gap: 10px;
   padding: 10px 10px;
   border-style: solid;
@@ -13,16 +15,35 @@ const Container = styled.div`
   align-self: center;
 `;
 
-export default ({ inputChange, delay, timeEnter }) => (
+const Description = styled.div`
+  font-style: italic;
+  grid-area: desc;
+`;
+
+export default ({ inputChange, delay1, delay2, timeEnter }) => (
   <Container>
-    <label htmlFor="delay" style={{ gridArea: 'delay' }}>
-      {'Delay: '}
+    <label htmlFor="delay1" style={{ gridArea: `delay1` }}>
+      {`Delay 1 (ms): `}
       <input
         style={{ width: '40px' }}
         type="number"
-        name="delay"
-        id="delay"
-        value={delay}
+        name="delay1"
+        id="delay1"
+        value={delay1}
+        min="0"
+        max="999"
+        step="1"
+        onChange={inputChange}
+      />
+    </label>
+    <label htmlFor="delay2" style={{ gridArea: `delay2` }}>
+      {`Delay 2 (ms): `}
+      <input
+        style={{ width: '40px' }}
+        type="number"
+        name="delay2"
+        id="delay2"
+        value={delay2}
         min="0"
         max="999"
         step="1"
@@ -39,5 +60,6 @@ export default ({ inputChange, delay, timeEnter }) => (
     >
       Enter
     </button>
+    <Description>Delay 2 must be either 0 (off) or greater than Delay 1</Description>
   </Container>
 );

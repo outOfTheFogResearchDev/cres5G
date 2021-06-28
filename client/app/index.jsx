@@ -35,7 +35,8 @@ export default class extends Component {
       ps1: 0,
       ps2: 0,
       pd: 0,
-      delay: 500,
+      delay1: 500,
+      delay2: 0,
       command: '',
       codesToggled: false,
       timeSyncToggled: false,
@@ -63,7 +64,7 @@ export default class extends Component {
   onToggle(name) {
     const that = this;
     return async function namedOnToggle() {
-      const { [name]: toggle, delay, ps1, ps2, pd, codesToggled } = that.state;
+      const { [name]: toggle, delay1, delay2, ps1, ps2, pd, codesToggled } = that.state;
       const newState = { [name]: !toggle };
       switch (name) {
         case 'codesToggled':
@@ -73,7 +74,13 @@ export default class extends Component {
           } else await post('/api/firmware');
           break;
         case 'timeSyncToggled':
-          if (!toggle) await post('/api/timesync/on', { delay });
+          if (!toggle) {
+            if (delay2 !== 0 && delay2 < delay1) {
+              this.setState({ response: 'Invalid delay 2'})
+              return;
+            }
+            await post('/api/timesync/on', { delay1, delay2 });
+          }
           else await post('/api/timesync/off');
           break;
         case 'freezeToggled':
@@ -105,8 +112,12 @@ export default class extends Component {
   }
 
   async timeEnter() {
-    const { delay } = this.state;
-    await post('/api/timesync/on', { delay });
+    const { delay1, delay2 } = this.state;
+    if (delay2 !== 0 && delay2 < delay1) {
+      this.setState({ response: 'Invalid delay 2'})
+      return;
+    }
+    await post('/api/timesync/on', { delay1, delay2 });
     this.setStateAndGlobal({ timeSyncToggled: true });
   }
 
@@ -127,8 +138,8 @@ export default class extends Component {
     }
     if (command.slice(0, 5) === 'mp3 0') newState.codesToggled = false;
     if (command.slice(0, 10) === 'timesync 1') {
-      newState.delay = command.slice(11);
-      newState.timeSyncToggled = true;
+      [newState.delay1, newState.delay2] = command.slice(11).split(" ");
+      if (newState.delay2 === 0 || newState.delay2 >= newState.delay1) newState.timeSyncToggled = true;
     }
     if (command.slice(0, 10) === 'timesync 0') newState.timeSyncToggled = false;
     if (command === 'frz 1') newState.freezeToggled = true;
@@ -156,7 +167,7 @@ export default class extends Component {
   }
 
   render() {
-    const { response, manualFrequency, ps1, ps2, pd, delay, command, codesToggled, timeSyncToggled, freezeToggled } =
+    const { response, manualFrequency, ps1, ps2, pd, delay1, delay2, command, codesToggled, timeSyncToggled, freezeToggled } =
       this.state;
     return (
       <Container>
@@ -168,7 +179,8 @@ export default class extends Component {
           ps2={ps2}
           pd={pd}
           manualEnter={this.manualEnter}
-          delay={delay}
+          delay1={delay1}
+          delay2={delay2}
           timeEnter={this.timeEnter}
           onToggle={this.onToggle}
           codesToggled={codesToggled}
