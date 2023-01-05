@@ -1,5 +1,5 @@
 {
-  "name": "cresgen2proto",
+  "name": "cres5g",
   "version": "1.0.0",
   "description": "",
   "main": "server/index.js",
@@ -14,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/outOfTheFogResearchDev/cresGen2Proto.git"
+    "url": "git+https://github.com/outOfTheFogResearchDev/cres5G.git"
   },
   "author": "Max Berkowitz",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/outOfTheFogResearchDev/cresGen2Proto/issues"
+    "url": "https://github.com/outOfTheFogResearchDev/cres5G/issues"
   },
-  "homepage": "https://github.com/outOfTheFogResearchDev/cresGen2Proto#readme",
+  "homepage": "https://github.com/outOfTheFogResearchDev/cres5G#readme",
   "dependencies": {
     "axios": "^0.18.1",
     "body-parser": "^1.18.3",

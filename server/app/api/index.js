@@ -17,6 +17,17 @@ api.get('/command', async (req, res) => {
   res.status(200).send({ response });
 });
 
+api.post('/auto_frequency', async (req, res) => {
+  await telnet.write(`sf 0 `);
+  res.sendStatus(201);
+});
+
+api.post('/auto_frequency/off', async (req, res) => {
+  const frequency = await telnet.getFreq();
+  await telnet.setFreq(frequency);
+  res.status(200).send({ frequency });
+});
+
 api.post('/manual_frequency', async (req, res) => {
   const { manualFrequency } = req.body;
   await telnet.setFreq(manualFrequency);
@@ -31,17 +42,6 @@ api.post('/firmware', async (req, res) => {
 api.post('/manual_codes', async (req, res) => {
   const { ps1, ps2, pd } = req.body;
   await telnet.write(`mp3 1 ${ps1} ${ps2} ${pd} `);
-  res.sendStatus(201);
-});
-
-api.post('/timesync/on', async (req, res) => {
-  const { delay1, delay2 } = req.body;
-  await telnet.write(`timesync 1 ${delay1} ${delay2} `);
-  res.sendStatus(201);
-});
-
-api.post('/timesync/off', async (req, res) => {
-  await telnet.write(`timesync 0 `);
   res.sendStatus(201);
 });
 

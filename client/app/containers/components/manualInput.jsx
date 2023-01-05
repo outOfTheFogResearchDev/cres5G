@@ -30,7 +30,7 @@ export default ({ inputChange, ps1, ps2, pd, manualEnter }) => (
         onChange={inputChange}
       />
     </label>
-    <label htmlFor="ps2" style={{ gridArea: 'ps2' }}>
+    <label htmlFor="ps2" style={{ gridArea: 'ps2', marginLeft: '1ch' }}>
       {'PS2: '}
       <input
         style={{ width: '40px' }}
@@ -44,7 +44,7 @@ export default ({ inputChange, ps1, ps2, pd, manualEnter }) => (
         onChange={inputChange}
       />
     </label>
-    <label htmlFor="pd" style={{ gridArea: 'pd' }}>
+    <label htmlFor="pd" style={{ gridArea: 'pd', paddingLeft: '1ch' }}>
       {'PD: '}
       <input
         style={{ width: '40px' }}

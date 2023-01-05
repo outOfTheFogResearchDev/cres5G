@@ -31,22 +31,19 @@ export default class extends Component {
     super(props);
     this.state = {
       response: [],
-      manualFrequency: 150,
+      manualFrequency: null,
       ps1: 0,
       ps2: 0,
       pd: 0,
-      delay1: 500,
-      delay2: 0,
       command: '',
+      freqToggled: false,
       codesToggled: false,
-      timeSyncToggled: false,
       freezeToggled: false,
     };
 
     [
-      'manualFrequencyEnter',
+      'freqRadioChange',
       'manualEnter',
-      'timeEnter',
       'enterCommand',
       'globalStat',
       'inputChange',
@@ -64,24 +61,26 @@ export default class extends Component {
   onToggle(name) {
     const that = this;
     return async function namedOnToggle() {
-      const { [name]: toggle, delay1, delay2, ps1, ps2, pd, codesToggled } = that.state;
+      const { [name]: toggle, ps1, ps2, pd, codesToggled } = that.state;
       const newState = { [name]: !toggle };
       switch (name) {
+        case 'freqToggled':
+          if (!toggle) {
+            const {
+              data: { frequency },
+            } = await post('/api/auto_frequency/off');
+            newState.manualFrequency = frequency;
+          }
+          else {
+            await post('/api/auto_frequency');
+            newState.manualFrequency = null;
+          }
+          break;
         case 'codesToggled':
           if (!toggle) {
             newState.freezeToggled = false;
             await post('/api/manual_codes', { ps1, ps2, pd });
           } else await post('/api/firmware');
-          break;
-        case 'timeSyncToggled':
-          if (!toggle) {
-            if (delay2 !== 0 && delay2 < delay1) {
-              this.setState({ response: 'Invalid delay 2'})
-              return;
-            }
-            await post('/api/timesync/on', { delay1, delay2 });
-          }
-          else await post('/api/timesync/off');
           break;
         case 'freezeToggled':
           if (!toggle) {
@@ -111,16 +110,6 @@ export default class extends Component {
     this.setState({ response });
   }
 
-  async timeEnter() {
-    const { delay1, delay2 } = this.state;
-    if (delay2 !== 0 && delay2 < delay1) {
-      this.setState({ response: 'Invalid delay 2'})
-      return;
-    }
-    await post('/api/timesync/on', { delay1, delay2 });
-    this.setStateAndGlobal({ timeSyncToggled: true });
-  }
-
   async enterCommand() {
     let { command } = this.state;
     command = command.trim();
@@ -128,7 +117,13 @@ export default class extends Component {
       data: { response },
     } = await get('/api/command', { params: { command } });
     const newState = { response };
-    if (command.slice(0, 2) === 'sf') newState.manualFrequency = command.slice(3);
+    if (command.slice(0, 4) === 'sf 1') {
+      newState.manualFrequency = [1008, 1088, 1168][+command.slice(5)];
+    }
+    if (command.slice(0, 4) === 'sf 0') {
+      newState.manualFrequency = null;
+      newState.codesToggled = false;
+    }
     if (command.slice(0, 5) === 'mp3 1') {
       const [ps1, ps2, pd] = command.slice(6).split(' ');
       newState.ps1 = ps1;
@@ -137,27 +132,21 @@ export default class extends Component {
       newState.codesToggled = true;
     }
     if (command.slice(0, 5) === 'mp3 0') newState.codesToggled = false;
-    if (command.slice(0, 10) === 'timesync 1') {
-      [newState.delay1, newState.delay2] = command.slice(11).split(" ");
-      if (newState.delay2 === 0 || newState.delay2 >= newState.delay1) newState.timeSyncToggled = true;
-    }
-    if (command.slice(0, 10) === 'timesync 0') newState.timeSyncToggled = false;
     if (command === 'frz 1') newState.freezeToggled = true;
     if (command === 'frz 0') newState.freezeToggled = false;
     this.setState(newState);
   }
 
-  async manualFrequencyEnter() {
-    const { manualFrequency } = this.state;
+  async freqRadioChange({ target: { value } }) {
+    const manualFrequency = +value;
     await post('/api/manual_frequency', { manualFrequency });
-    this.setStateAndGlobal({});
+    this.setStateAndGlobal({ manualFrequency, freqToggled: true });
   }
 
   async manualEnter() {
     const { ps1, ps2, pd } = this.state;
     await post('/api/manual_codes', { ps1, ps2, pd });
-    this.setState({ codesToggled: true });
-    this.setStateAndGlobal({});
+    this.setStateAndGlobal({ codesToggled: true });
   }
 
   inputChange({ target: { name, value: v } }) {
@@ -167,24 +156,21 @@ export default class extends Component {
   }
 
   render() {
-    const { response, manualFrequency, ps1, ps2, pd, delay1, delay2, command, codesToggled, timeSyncToggled, freezeToggled } =
+    const { response, manualFrequency, ps1, ps2, pd, command, freqToggled, codesToggled, freezeToggled } =
       this.state;
     return (
       <Container>
         <CresControl
+          freqRadioChange={this.freqRadioChange}
           inputChange={this.inputChange}
           manualFrequency={manualFrequency}
-          manualFrequencyEnter={this.manualFrequencyEnter}
           ps1={ps1}
           ps2={ps2}
           pd={pd}
           manualEnter={this.manualEnter}
-          delay1={delay1}
-          delay2={delay2}
-          timeEnter={this.timeEnter}
           onToggle={this.onToggle}
+          freqToggled={freqToggled}
           codesToggled={codesToggled}
-          timeSyncToggled={timeSyncToggled}
           freezeToggled={freezeToggled}
         />
         <Command
